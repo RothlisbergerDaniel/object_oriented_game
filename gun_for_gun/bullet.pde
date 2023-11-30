@@ -52,6 +52,7 @@ class Bullet {
   }
   
   void display(float x, float y, float size) {
+    stroke(0);
     circle(x, y, size); //simple primitive for display
   }
   

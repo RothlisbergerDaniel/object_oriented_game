@@ -11,6 +11,7 @@ class Tile {
   
   void display(float x, float y, float w, float h) {
     noFill();
+    stroke(0);
     rect(x, y, w, h); //display rectangle primitive
   }
   

@@ -4,12 +4,14 @@ boolean p1Jump = false;
 boolean p1Shoot = false; //controls p1
 int p1Aim = 0; //default aim direction
 int p1Health = 100; //p1 health, default 100. May change if I add multiple characters.
+int p1Ammo = 8; //p1 ammo, starts at 8
 int p2Horizontal;
 int p2Vertical;
 boolean p2Jump = false;
 boolean p2Shoot = false; //controls p2
 int p2Aim = 180; //default aim direction
 int p2Health = 100; //p2 health, default 100. Same as p1.
+int p2Ammo = 8;
 
 Player p1;
 Player p2;
@@ -70,20 +72,38 @@ void draw() {
   p2.move(p2Horizontal, p2Vertical, p2Jump); //move players
   
   p1.display(p1.pos.x, p1.pos.y);
+  p1.displayHealth(p1.pos.x, p1.pos.y, p1Health);
+  p1.displayAmmo(p1.pos.x, p1.pos.y, p1Ammo);
   p2.display(p2.pos.x, p2.pos.y); //show players
+  p2.displayHealth(p2.pos.x, p2.pos.y, p2Health); //and player health
+  p2.displayAmmo(p2.pos.x, p2.pos.y, p2Ammo); //and ammo
   
   p1Aim = p1.getPlayerAngle(p1Horizontal, p1Vertical, p1Aim);
   p2Aim = p2.getPlayerAngle(p2Horizontal, p2Vertical, p2Aim); //gets angle based on keys held
   
-  if(p1Shoot && p1.reload == 0) {
+  if(p1Shoot && p1.reload == 0 && p1Ammo > 0) {
     p1.shoot(p1.weapon, p1Aim, 1); //spawn bullets for current weapon
+    p1Ammo --;
+    if(p1Ammo == 0) {
+      p1.reload = 60;
+    }
   } else if(p1.reload > 0) {
     p1.reload --; //reload if not ready to shoot
+    if(p1.reload == 0 && p1Ammo == 0) {
+      p1Ammo = 8;
+    }
   }
-  if(p2Shoot && p2.reload == 0) {
+  if(p2Shoot && p2.reload == 0 && p2Ammo > 0) {
     p2.shoot(p2.weapon, p2Aim, 2);
+    p2Ammo --;
+    if(p2Ammo == 0) {
+      p2.reload = 60;
+    }
   } else if(p2.reload > 0) {
     p2.reload --;
+    if(p1.reload == 0 && p1Ammo == 0) {
+      p1Ammo = 8;
+    }
   }
     
   
@@ -93,8 +113,21 @@ void draw() {
     current.display(current.pos.x, current.pos.y, current.size); //move and display bullets
     
     if(current.checkOffscreen(current.pos.x, current.pos.y) || current.checkPlayerHit(current.pos.x, current.pos.y, current.team) || current.bounces == 0) { //if offscreen or can't bounce any more
+      if(current.checkPlayerHit(current.pos.x, current.pos.y, current.team)) { //specifically check if a player is hit
+        if(current.team == 2) { //if p1 is hit
+          p1Health -= current.damage; //damage p1
+        } else { //otherwise damage p2
+          p2Health -= current.damage;
+        }
+      }
+      
       bullets.remove(i); //remove bullet
       i --; //decrement i to keep place in list
+      
+      if(p1Health < 1 || p2Health < 1) {
+        //end game, return to menu;
+        //break;
+      }
     }
   }
   

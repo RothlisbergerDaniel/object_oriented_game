@@ -30,6 +30,20 @@ class Player {
     rect(x, y, SIZE, SIZE); //draw the player - TO BE UPDATED AFTER I ADD ART
   }
   
+  void displayHealth(float x, float y, int health) {
+    stroke(255, 0, 0);
+    rect(x, y - 30, 50, 5);
+    stroke(0 + 2.55 * (100 - health), 255, 0); //health bar gets yellower as it decreases
+    rect(x, y - 30, health / 2, 5);
+  }
+  
+  void displayAmmo(float x, float y, int ammo) {
+    stroke(255, 150, 0);
+    rect(x, y - 20, 50, 5);
+    stroke(255, 255, 0);
+    rect(x, y - 20, ammo / 2, 5);
+  }
+  
   void move(int horizontal, int vertical, /*<<<Maybe unnecessary?*/ boolean jumping) {
     if(jumping /*jumping, change key later */ && ((onGround && jumpHold == 0) /*just standing on ground */ || (jumpHold < 15 && jumpHold >= 0) /*held jump is between 0 and 15 */)) {
       if(onGround) {
@@ -134,19 +148,19 @@ class Player {
       case 0: //basic pistol
         reload = 30; //30 frames of delay between shots - 0.5s
         variance = 2; //2 degrees of angle variance/spread
-        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 0, 10, 20, 0, 0, 1, 0, 1, team));
+        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 10, 10, 20, 0, 0, 1, 0, 1, team));
         recoil.mult(2); //2x recoil multiplier
         break;
       case 1:
         reload = 60; //1s
         variance = 2; //2 degrees
-        bullets.add(new Bullet(pos.x, /*x */ pos.y, /*y */ radians(angle + random(-variance, variance)), /*angle (degrees) */ 0, /*damage */ 15, /*size */ 10, /*initial velocity */ 10, /*initial y velocity, useful for weapons with drop */ 0, /*bullet spawn delay */ 3, /*max bounces */ 1, /*gravity */ 0.99, /*air friction */ 1 /*team */));
+        bullets.add(new Bullet(pos.x, /*x */ pos.y, /*y */ radians(angle + random(-variance, variance)), /*angle (degrees) */ 20, /*damage */ 15, /*size */ 10, /*initial velocity */ 10, /*initial y velocity, useful for weapons with drop */ 0, /*bullet spawn delay */ 3, /*max bounces */ 1, /*gravity */ 0.99, /*air friction */ 1 /*team */));
         recoil.mult(15); //15x recoil
         break;
       case 2:
         reload = 3; //0.05s
         variance = 3; //3 deg
-        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 0, 5, 15, 0, 0, 1, 0, 1, team));
+        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 1, 5, 15, 0, 0, 1, 0, 1, team));
         recoil.mult(2.2); //2.2x recoil
         break;
         
