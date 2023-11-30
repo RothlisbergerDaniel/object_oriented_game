@@ -2,12 +2,14 @@ int p1Horizontal;
 int p1Vertical;
 boolean p1Jump = false;
 boolean p1Shoot = false; //controls p1
-int p1aim = 0; //default aim direction
+int p1Aim = 0; //default aim direction
+int p1Health = 100;
 int p2Horizontal;
 int p2Vertical;
 boolean p2Jump = false;
 boolean p2Shoot = false; //controls p2
-int p2aim = 180; //default aim direction
+int p2Aim = 180; //default aim direction
+int p2Health = 100;
 
 Player p1;
 Player p2;
@@ -70,16 +72,16 @@ void draw() {
   p1.display(p1.pos.x, p1.pos.y);
   p2.display(p2.pos.x, p2.pos.y); //show players
   
-  p1aim = p1.getPlayerAngle(p1Horizontal, p1Vertical, p1aim);
-  p2aim = p2.getPlayerAngle(p2Horizontal, p2Vertical, p2aim); //gets angle based on keys held
+  p1Aim = p1.getPlayerAngle(p1Horizontal, p1Vertical, p1Aim);
+  p2Aim = p2.getPlayerAngle(p2Horizontal, p2Vertical, p2Aim); //gets angle based on keys held
   
   if(p1Shoot && p1.reload == 0) {
-    p1.shoot(p1.weapon, p1aim, 1); //spawn bullets for current weapon
+    p1.shoot(p1.weapon, p1Aim, 1); //spawn bullets for current weapon
   } else if(p1.reload > 0) {
     p1.reload --; //reload if not ready to shoot
   }
   if(p2Shoot && p2.reload == 0) {
-    p2.shoot(p2.weapon, p2aim, 2);
+    p2.shoot(p2.weapon, p2Aim, 2);
   } else if(p2.reload > 0) {
     p2.reload --;
   }
