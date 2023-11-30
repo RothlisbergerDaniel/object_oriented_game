@@ -31,9 +31,16 @@ class Bullet {
     if(delay == 0) {
       vel.x *= friction;
       vel.y += gravity;
-      pos.add(vel);
       
-      if(checkOnGround(pos.x, pos.y)) {
+      pos.x += vel.x;
+      if(p1.checkCollision(pos.x, pos.y, size)) { //hijack the collision detection script in class Player to save on space and improve readability
+        vel.x *= -1;
+        pos.x += vel.x;
+        bounces --;
+      }
+      
+      pos.y += vel.y;
+      if(p1.checkCollision(pos.x, pos.y, size)) { //split x and y collision scripts into two parts to properly register horizontal and vertical bounces
         vel.y *= -1;
         pos.y += vel.y;
         if(gravity > 0) {
@@ -72,14 +79,13 @@ class Bullet {
     }
   }
   
-  boolean checkOnGround(float x, float y) { //TO BE UPDATED AFTER I ADD TILE OBJECTS
+  /*boolean checkCollision(float x, float y, float bSize) {
     
-    if(y > height / 2 + size / 2) { //At the moment, just check if bullets are below the midway point on the screen.
-      return true;
-    } else {
-      return false;
+    if(p1.checkCollision(x, y, size)) { //hijack the collision detection script in class Player to save on space and improve readability
+      return true; //if it returns true, pass the value forward
     }
-  }
+    return false;
+  }*/
     
   
 }

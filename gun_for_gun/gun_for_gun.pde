@@ -1,17 +1,54 @@
 int p1Horizontal;
 int p1Vertical;
 boolean p1Jump = false;
-boolean p1Shoot = false;
-int p1aim = 0;
+boolean p1Shoot = false; //controls p1
+int p1aim = 0; //default aim direction
 int p2Horizontal;
 int p2Vertical;
 boolean p2Jump = false;
-boolean p2Shoot = false;
-int p2aim = 180;
+boolean p2Shoot = false; //controls p2
+int p2aim = 180; //default aim direction
 
 Player p1;
 Player p2;
 ArrayList<Bullet> bullets = new ArrayList<Bullet>();
+ArrayList<Tile> tiles = new ArrayList<Tile>(); //define objects and object lists
+
+int MAPWIDTH = 40;
+int MAPHEIGHT = 32; //Map width and height, in tiles
+//            v v v v v v v v v v v v v v v v v v v v
+String MAP = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" + /*This entire string is the*/
+     /*2*/   "x00000000000000000000000000000000000000x" + /*map data. "x" represents */
+             "x00000000000000000000000000000000000000x" + /*a solid tile, "0" stands */
+     /*4*/   "x00000000000000000000000000000000000000x" + /*for empty air.           */
+             "x00000000000000000000000000000000000000x" +
+     /*6*/   "x00000000000000000000000000000000000000x" +
+             "x00000000000000000000000000000000000000x" +
+     /*8*/   "x00000000000000000000000000000000000000x" +
+             "x00000000000000000000000000000000000000x" +
+     /*10*/  "x0000000000000x0000000000x0000000000000x" +
+             "x0000000000000x0000000000x0000000000000x" +
+     /*12*/  "x0000000000000x0000000000x0000000000000x" +
+             "x00000000000000000000000000000000000000x" +
+     /*14*/  "x00000000000000000000000000000000000000x" +
+             "x00000000000000000000000000000000000000x" +
+     /*16*/  "x00000000000x00000000000000x00000000000x" +
+             "x000000000000x000000000000x000000000000x" +
+     /*18*/  "x0000000000000xxxxxxxxxxxx0000000000000x" +
+             "x00000000000000000000000000000000000000x" +
+     /*20*/  "x00000000000000000000000000000000000000x" +
+             "x00000000000000000000000000000000000000x" +
+     /*22*/  "x00000000000000000000000000000000000000x" +
+             "x00000000000000000000000000000000000000x" +
+     /*24*/  "x00000000000000000000000000000000000000x" +
+             "x00000000000000000000000000000000000000x" +
+     /*26*/  "x00000000000000000000000000000000000000x" +
+             "x00000000000000000000000000000000000000x" +
+     /*28*/  "x00000000000000000000000000000000000000x" +
+             "x00000000000000000000000000000000000000x" +
+     /*30*/  "x00000000000000000000000000000000000000x" +
+             "x00000000000000000000000000000000000000x" +
+     /*32*/  "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" ;
 
 void setup() {
   size(1280, 1024);
@@ -21,6 +58,7 @@ void setup() {
   p1 = new Player(50, height / 2, 1, 100);
   p2 = new Player(width - 50, height / 2, 2, 100);
   rectMode(CENTER);
+  createMap();
 }
 
 void draw() {
@@ -58,7 +96,21 @@ void draw() {
     }
   }
   
+  for(int i = 0; i < tiles.size(); i++) {
+    Tile current = tiles.get(i);
+    current.display(current.pos.x, current.pos.y, current.dimensions.x, current.dimensions.y);
+  }
   
+}
+
+void createMap() {
+  for(int i = 0; i < MAPHEIGHT; i++) {
+    for(int j = 0; j < MAPWIDTH; j++) {
+      if(char(MAP.charAt(j + i * MAPWIDTH)) == 'x') {
+        tiles.add(new Tile(32 * j + 16, 32 * i +16, 32, 32));
+      }
+    }
+  }
 }
 
 void keyPressed() {

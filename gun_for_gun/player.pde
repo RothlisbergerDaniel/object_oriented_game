@@ -52,9 +52,14 @@ class Player {
     
     vel.add(horizontal * MOVESPEED, GRAVITY * gravMult /*This is where gravity will go*/);
     vel.x *= FRICTION; //decrease x velocity
-    pos.add(vel); //update position
-    
-    if(checkOnGround(pos.x, pos.y)) { //check if player is on ground based on position
+    pos.x += vel.x; //update position
+    if(checkCollision(pos.x, pos.y, SIZE)) {
+      pos.x -= vel.x;
+      vel.x = 0;
+    } //horizontal collision
+        
+    pos.y += vel.y; //vertical collision
+    if(checkCollision(pos.x, pos.y, SIZE)) { //check if player is on ground based on position
       if(vel.y > 0) {
         onGround = true; //Update the player's "grounded" state if they've just landed on the ground
         if(jumpHold > -2 && !jumping) {
@@ -75,14 +80,27 @@ class Player {
     pos.set(constrain(pos.x, 13, width - 13), constrain(pos.y, 13, height - 13)); //keep the players in bounds
   }
   
-  boolean checkOnGround(float x, float y) { //TO BE UPDATED AFTER I ADD TILE OBJECTS
+  boolean checkCollision(float pX, float pY, float size) { //TO BE UPDATED AFTER I ADD TILE OBJECTS
+    for(int i = 0; i < tiles.size(); i++) {
+      Tile current = tiles.get(i);
+      float tX = current.pos.x;
+      float tY = current.pos.y;
+      float tW = current.dimensions.x;
+      float tH = current.dimensions.y; //set up variables for readability
+      if(pX + size / 2 > tX - tW / 2 && pX - size / 2 < tX + tW / 2 && pY + size / 2 > tY - tH / 2 && pY - size / 2 < tY + tH / 2) { //check if player center within bounds
+        return true;
+      }
+    }
+    return false;
+  }
+      
     
-    if(y > height / 2) { //At the moment, just check if players are below the midway point on the screen.
+    /*if(y > height / 2) { //At the moment, just check if players are below the midway point on the screen.
       return true;
     } else {
       return false;
     }
-  }
+  } */
   
   int getPlayerAngle(int horizontal, int vertical, int prevAngle) {
     int angle = prevAngle;
@@ -131,6 +149,10 @@ class Player {
         bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 0, 5, 15, 0, 0, 1, 0, 1, team));
         recoil.mult(2.2);
         break;
+        
+      default:
+        println("Invalid weapon");
+        break;
     }
     
     vel.x += recoil.x;
@@ -140,7 +162,7 @@ class Player {
       jumpHold = 14;
     }
   }
-  
-  
-  
 }
+
+  
+  
