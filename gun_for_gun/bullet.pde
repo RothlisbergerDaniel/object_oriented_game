@@ -29,14 +29,14 @@ class Bullet {
   
   void move() {
     if(delay == 0) {
-      vel.x *= friction;
-      vel.y += gravity;
+      vel.x *= friction; //slow bullets down if air resistance is applied
+      vel.y += gravity; //make them drop if gravity is applied
       
       pos.x += vel.x;
       if(p1.checkCollision(pos.x, pos.y, size)) { //hijack the collision detection script in class Player to save on space and improve readability
         vel.x *= -1;
-        pos.x += vel.x;
-        bounces --;
+        pos.x += vel.x; //push bullet out of the wall and back the way it came. Useful for especially slow projectiles.
+        bounces --; //subtract bounces if applicable
       }
       
       pos.y += vel.y;
@@ -44,7 +44,7 @@ class Bullet {
         vel.y *= -1;
         pos.y += vel.y;
         if(gravity > 0) {
-          vel.y *= 0.8;
+          vel.y *= 0.8; //prevent bullets from maintaining vertical height or becoming super balls
         }
         bounces --;
       }
@@ -52,7 +52,7 @@ class Bullet {
   }
   
   void display(float x, float y, float size) {
-    circle(x, y, size);
+    circle(x, y, size); //simple primitive for display
   }
   
   boolean checkOffscreen(float x, float y) {
@@ -64,13 +64,13 @@ class Bullet {
   }
   
   boolean checkPlayerHit(float x, float y, int team) {
-    if(team == 2) {
-      if(x > p1.pos.x - p1.SIZE / 2 - size && y > p1.pos.y - p1.SIZE / 2 - size && x < p1.pos.x + p1.SIZE / 2 + size && y < p1.pos.y + p1.SIZE / 2 + size) {
+    if(team == 2) { //if the bullet belongs to p2, check for hits on p1
+      if(x > p1.pos.x - p1.SIZE / 2 - size && y > p1.pos.y - p1.SIZE / 2 - size && x < p1.pos.x + p1.SIZE / 2 + size && y < p1.pos.y + p1.SIZE / 2 + size) { //if within bounds of player
         return true;
       } else {
         return false;
       }
-    } else {
+    } else { //if the bullet belongs to p1, check for hits on p2
       if(x > p2.pos.x - p2.SIZE / 2 - size && y > p2.pos.y - p2.SIZE / 2 - size && x < p2.pos.x + p2.SIZE / 2 + size && y < p2.pos.y + p2.SIZE / 2 + size) {
         return true;
       } else {
@@ -79,7 +79,7 @@ class Bullet {
     }
   }
   
-  /*boolean checkCollision(float x, float y, float bSize) {
+  /*boolean checkCollision(float x, float y, float bSize) { //irrelevant
     
     if(p1.checkCollision(x, y, size)) { //hijack the collision detection script in class Player to save on space and improve readability
       return true; //if it returns true, pass the value forward

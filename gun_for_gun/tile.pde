@@ -5,13 +5,13 @@ class Tile {
   
   Tile(float x, float y, float w, float h) {
     pos.set(x, y);
-    dimensions.set(w, h);
+    dimensions.set(w, h); //define x, y, width and height as PVectors
     
   }
   
   void display(float x, float y, float w, float h) {
     noFill();
-    rect(x, y, w, h);
+    rect(x, y, w, h); //display rectangle primitive
   }
   
 }

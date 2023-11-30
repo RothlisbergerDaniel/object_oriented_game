@@ -30,7 +30,7 @@ class Player {
     rect(x, y, SIZE, SIZE); //draw the player - TO BE UPDATED AFTER I ADD ART
   }
   
-  void move(int horizontal, int vertical, boolean jumping) {
+  void move(int horizontal, int vertical, /*<<<Maybe unnecessary?*/ boolean jumping) {
     if(jumping /*jumping, change key later */ && ((onGround && jumpHold == 0) /*just standing on ground */ || (jumpHold < 15 && jumpHold >= 0) /*held jump is between 0 and 15 */)) {
       if(onGround) {
         vel.y = -15;
@@ -80,8 +80,8 @@ class Player {
     pos.set(constrain(pos.x, 13, width - 13), constrain(pos.y, 13, height - 13)); //keep the players in bounds
   }
   
-  boolean checkCollision(float pX, float pY, float size) { //TO BE UPDATED AFTER I ADD TILE OBJECTS
-    for(int i = 0; i < tiles.size(); i++) {
+  boolean checkCollision(float pX, float pY, float size) { //collision detection. Reused for bullets.
+    for(int i = 0; i < tiles.size(); i++) { //iterate over all tile objects
       Tile current = tiles.get(i);
       float tX = current.pos.x;
       float tY = current.pos.y;
@@ -95,14 +95,14 @@ class Player {
   }
       
     
-    /*if(y > height / 2) { //At the moment, just check if players are below the midway point on the screen.
+    /*if(y > height / 2) { //At the moment, just check if players are below the midway point on the screen. //IRRELEVANT
       return true;
     } else {
       return false;
     }
   } */
   
-  int getPlayerAngle(int horizontal, int vertical, int prevAngle) {
+  int getPlayerAngle(int horizontal, int vertical, int prevAngle) { //figure out what angle the player is aiming at, based on horizontal and directional movement
     int angle = prevAngle;
     if(abs(horizontal) + abs(vertical) > 0) {
       angle = 0;
@@ -122,32 +122,32 @@ class Player {
       }
     }
     
-    return angle;
+    return angle; //angle returned in degrees
   }
   
   void shoot(int weapon, int angle, int team) {
-    recoil = PVector.fromAngle(radians((180 - angle) * -1));
+    recoil = PVector.fromAngle(radians((180 - angle) * -1)); //get a PVector from the player's shot angle, invert it, and BOOM - recoil!
     int variance = 0; //angle variance
     
     switch(weapon) {
       
-      case 0:
-        reload = 30;
-        variance = 2;
+      case 0: //basic pistol
+        reload = 30; //30 frames of delay between shots - 0.5s
+        variance = 2; //2 degrees of angle variance/spread
         bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 0, 10, 20, 0, 0, 1, 0, 1, team));
-        recoil.mult(2);
+        recoil.mult(2); //2x recoil multiplier
         break;
       case 1:
-        reload = 60;
-        variance = 2;
+        reload = 60; //1s
+        variance = 2; //2 degrees
         bullets.add(new Bullet(pos.x, /*x */ pos.y, /*y */ radians(angle + random(-variance, variance)), /*angle (degrees) */ 0, /*damage */ 15, /*size */ 10, /*initial velocity */ 10, /*initial y velocity, useful for weapons with drop */ 0, /*bullet spawn delay */ 3, /*max bounces */ 1, /*gravity */ 0.99, /*air friction */ 1 /*team */));
-        recoil.mult(15);
+        recoil.mult(15); //15x recoil
         break;
       case 2:
-        reload = 3;
-        variance = 3;
+        reload = 3; //0.05s
+        variance = 3; //3 deg
         bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 0, 5, 15, 0, 0, 1, 0, 1, team));
-        recoil.mult(2.2);
+        recoil.mult(2.2); //2.2x recoil
         break;
         
       default:

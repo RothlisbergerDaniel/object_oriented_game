@@ -3,13 +3,13 @@ int p1Vertical;
 boolean p1Jump = false;
 boolean p1Shoot = false; //controls p1
 int p1Aim = 0; //default aim direction
-int p1Health = 100;
+int p1Health = 100; //p1 health, default 100. May change if I add multiple characters.
 int p2Horizontal;
 int p2Vertical;
 boolean p2Jump = false;
 boolean p2Shoot = false; //controls p2
 int p2Aim = 180; //default aim direction
-int p2Health = 100;
+int p2Health = 100; //p2 health, default 100. Same as p1.
 
 Player p1;
 Player p2;
@@ -60,7 +60,7 @@ void setup() {
   p1 = new Player(50, height / 2, 1, 100);
   p2 = new Player(width - 50, height / 2, 2, 100);
   rectMode(CENTER);
-  createMap();
+  createMap(); //load tiles
 }
 
 void draw() {
@@ -106,8 +106,8 @@ void draw() {
 }
 
 void createMap() {
-  for(int i = 0; i < MAPHEIGHT; i++) {
-    for(int j = 0; j < MAPWIDTH; j++) {
+  for(int i = 0; i < MAPHEIGHT; i++) { //vertical loop, iterates y times, where y is the height of the map
+    for(int j = 0; j < MAPWIDTH; j++) { //horizontal loop, iterates x times, where x is the width of the map
       if(char(MAP.charAt(j + i * MAPWIDTH)) == 'x') {
         tiles.add(new Tile(32 * j + 16, 32 * i +16, 32, 32));
       }
