@@ -16,6 +16,9 @@ class Player {
   
   int reload = 0;
   int weapon = 0;
+  int maxAmmo = 8; //ammo maximmum, changes with weapon
+  int maxReload = 120; //time in frames to reload a fresh clip, changes with weapon
+  int clipsLeft = 3; //number of clips left before the weapon resets to default
   
   Player(float x, float y, int playerNumber, float pHealth) {
     pos.set(x, y);
@@ -31,17 +34,33 @@ class Player {
   }
   
   void displayHealth(float x, float y, int health) {
-    stroke(255, 0, 0);
+    stroke(0);
+    fill(255, 0, 0);
     rect(x, y - 30, 50, 5);
-    stroke(0 + 2.55 * (100 - health), 255, 0); //health bar gets yellower as it decreases
+    stroke(0);
+    fill(0 + 2.55 * (100 - health), 255, 0); //health bar gets yellower as it decreases
     rect(x, y - 30, health / 2, 5);
   }
   
-  void displayAmmo(float x, float y, int ammo) {
-    stroke(255, 150, 0);
+  void displayAmmo(float x, float y, int ammo, boolean doReload) {
+    stroke(0);
+    noFill();
     rect(x, y - 20, 50, 5);
-    stroke(255, 255, 0);
-    rect(x, y - 20, ammo / 2, 5);
+    stroke(0);
+    if(doReload) { //if the weapon doesn't need to reload
+      fill(255, 255, 0);
+      rect(x, y - 20, (float(ammo) / float(maxAmmo)) * 50, 5); //get percentage of remaining ammo by dividing current by maximum, then multiply by 50 to get bar width
+    } else {
+      fill(225, 225, 0);
+      rect(x, y - 20, 50 - ((float(reload) / float(maxReload)) * 50), 5); //we convert to float to allow for precise division, use 50 - percentage of reload so that the bar fills up instead of draining
+    }
+    
+    fill(255, 255, 0);
+    for(int i = 0; i < clipsLeft; i++) {
+      rect(x - 22 + 5 * i, y - 25, 3, 3); //display clips left
+    }
+    
+    noFill();
   }
   
   void move(int horizontal, int vertical, /*<<<Maybe unnecessary?*/ boolean jumping) {
@@ -139,6 +158,35 @@ class Player {
     return angle; //angle returned in degrees
   }
   
+  void changeWeapon(int pWeapon) {
+    weapon = pWeapon;
+    
+    switch(pWeapon) {
+      
+      case 0:
+        reload = 120;
+        maxReload = 120;
+        maxAmmo = 8;
+        clipsLeft = 0; //default pistol. Set reload to maximum every time a new weapon is picked up, so that players can't immediately start using it.
+        break;
+      case 1:
+        reload = 240; //good rule of thumb: ammo * time between shots = clip reload time
+        maxReload = 240;
+        maxAmmo = 4; //half of default
+        clipsLeft = 2; //12 shots max = 360 total damage = 120 per clip: default is 80 per
+        break;
+      case 2:
+        reload = 300;
+        maxReload = 300;
+        maxAmmo = 100;
+        clipsLeft = 1; //600 shots max = 600 total damage = 300 per clip - too much?
+      
+      default:
+        println("Invalid weapon");
+        break;
+    }
+  }
+  
   void shoot(int weapon, int angle, int team) {
     recoil = PVector.fromAngle(radians((180 - angle) * -1)); //get a PVector from the player's shot angle, invert it, and BOOM - recoil!
     int variance = 0; //angle variance
@@ -154,7 +202,7 @@ class Player {
       case 1:
         reload = 60; //1s
         variance = 2; //2 degrees
-        bullets.add(new Bullet(pos.x, /*x */ pos.y, /*y */ radians(angle + random(-variance, variance)), /*angle (degrees) */ 20, /*damage */ 15, /*size */ 10, /*initial velocity */ 10, /*initial y velocity, useful for weapons with drop */ 0, /*bullet spawn delay */ 3, /*max bounces */ 1, /*gravity */ 0.99, /*air friction */ 1 /*team */));
+        bullets.add(new Bullet(pos.x, /*x */ pos.y, /*y */ radians(angle + random(-variance, variance)), /*angle (degrees) */ 30, /*damage */ 15, /*size */ 10, /*initial velocity */ 10, /*initial y velocity, useful for weapons with drop */ 0, /*bullet spawn delay */ 3, /*max bounces */ 1, /*gravity */ 0.99, /*air friction */ 1 /*team */));
         recoil.mult(15); //15x recoil
         break;
       case 2:

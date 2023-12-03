@@ -73,10 +73,10 @@ void draw() {
   
   p1.display(p1.pos.x, p1.pos.y);
   p1.displayHealth(p1.pos.x, p1.pos.y, p1Health);
-  p1.displayAmmo(p1.pos.x, p1.pos.y, p1Ammo);
+  p1.displayAmmo(p1.pos.x, p1.pos.y, p1Ammo, p1Ammo > 0);
   p2.display(p2.pos.x, p2.pos.y); //show players
   p2.displayHealth(p2.pos.x, p2.pos.y, p2Health); //and player health
-  p2.displayAmmo(p2.pos.x, p2.pos.y, p2Ammo); //and ammo
+  p2.displayAmmo(p2.pos.x, p2.pos.y, p2Ammo, p2Ammo > 0); //and ammo
   
   p1Aim = p1.getPlayerAngle(p1Horizontal, p1Vertical, p1Aim);
   p2Aim = p2.getPlayerAngle(p2Horizontal, p2Vertical, p2Aim); //gets angle based on keys held
@@ -85,24 +85,34 @@ void draw() {
     p1.shoot(p1.weapon, p1Aim, 1); //spawn bullets for current weapon
     p1Ammo --;
     if(p1Ammo == 0) {
-      p1.reload = 60;
+      if(p1.clipsLeft > 0 && p1.weapon > 0) {
+        p1.reload = p1.maxReload;
+        p1.clipsLeft --;
+      } else {
+        p1.changeWeapon(0);
+      }
     }
   } else if(p1.reload > 0) {
     p1.reload --; //reload if not ready to shoot
     if(p1.reload == 0 && p1Ammo == 0) {
-      p1Ammo = 8;
+      p1Ammo = p1.maxAmmo;
     }
   }
   if(p2Shoot && p2.reload == 0 && p2Ammo > 0) {
     p2.shoot(p2.weapon, p2Aim, 2);
     p2Ammo --;
     if(p2Ammo == 0) {
-      p2.reload = 60;
+      if(p2.clipsLeft > 0 && p2.weapon > 0) { //if you're not using the default weapon and you still have clips left
+        p2.reload = p2.maxReload;
+        p2.clipsLeft --;
+      } else { //otherwise, set to default values - starter pistol. All other weapons should have some advantage over this.
+        p2.changeWeapon(0);
+      }
     }
   } else if(p2.reload > 0) {
     p2.reload --;
     if(p1.reload == 0 && p1Ammo == 0) {
-      p1Ammo = 8;
+      p1Ammo = p2.maxAmmo;
     }
   }
     
