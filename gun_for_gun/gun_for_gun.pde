@@ -16,7 +16,7 @@ int p2Ammo = 8;
 Player p1;
 Player p2;
 ArrayList<Bullet> bullets = new ArrayList<Bullet>();
-ArrayList<Tile> tiles = new ArrayList<Tile>(); //define objects and object lists
+ArrayList<Tile> tiles = new ArrayList<Tile>(); //change tile arraylist to a regular array! //define objects and object lists
 
 int MAPWIDTH = 40;
 int MAPHEIGHT = 32; //Map width and height, in tiles

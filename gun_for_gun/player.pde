@@ -25,6 +25,7 @@ class Player {
     vel.set(0, 0);
     pNum = playerNumber;
     health = pHealth; //setup player
+    changeWeapon(1);
     
   }
   
@@ -105,6 +106,9 @@ class Player {
       }
       vel.y *= -1; //invert y velocity to "bounce back"
       pos.y += vel.y; //change y position to guarantee the player doesn't get "stuck"
+      if(checkCollision(pos.x, pos.y, SIZE)) {
+        pos.y -= 1; //just in case, if the player is still stuck they should be pushed upwards, since they will never get stuck in the ceiling
+      }
       pos.y = round(pos.y);
       vel.y = 0; //Reset y velocity to prevent bouncing
     }
@@ -180,6 +184,7 @@ class Player {
         maxReload = 300;
         maxAmmo = 100;
         clipsLeft = 1; //600 shots max = 600 total damage = 300 per clip - too much?
+        break;
       
       default:
         println("Invalid weapon");
@@ -218,7 +223,11 @@ class Player {
     }
     
     vel.x += recoil.x;
-    vel.y += recoil.y / 1; //may change if necessary
+    if(angle == 90) {  
+      vel.y = recoil.y / 1; //may change if necessary
+    } else {
+      vel.y += recoil.y / 1; //may change if necessary
+    }
     if(recoil.y < 0) {
       //onGround = false;
       jumpHold = 14;
