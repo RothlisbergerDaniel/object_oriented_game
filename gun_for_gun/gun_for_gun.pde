@@ -59,8 +59,8 @@ void setup() {
   background(150);
   noFill();
   noStroke();
-  p1 = new Player(100, height / 2, 1, 100);
-  p2 = new Player(width - 100, height / 2, 2, 100);
+  p1 = new Player(100, height / 2 + 72, 1, 100);
+  p2 = new Player(width - 100, height / 2 + 72, 2, 100);
   rectMode(CENTER);
   createMap(); //load tiles
 }
