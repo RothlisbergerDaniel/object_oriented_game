@@ -3,6 +3,7 @@ class Player {
   PVector pos = new PVector(0, 0);
   PVector vel = new PVector(0, 0);
   PVector recoil = new PVector(0, 0);
+  int coyoteTime; //coyote time - frames the player can jump after leaving an edge
   int pNum; //player number identifier
   float health; //player health
   float FRICTION = 0.8; //the rate at which the player decelerates
@@ -25,7 +26,8 @@ class Player {
     vel.set(0, 0);
     pNum = playerNumber;
     health = pHealth; //setup player
-    changeWeapon(1);
+    changeWeapon(0); //reset weapon
+    coyoteTime = 6; //reset coyote time
     
   }
   
@@ -96,6 +98,7 @@ class Player {
     if(checkCollision(pos.x, pos.y, SIZE)) { //check if player is on ground based on position
       if(vel.y > 0) {
         onGround = true; //Update the player's "grounded" state if they've just landed on the ground
+        coyoteTime = 6; //6 frames of grace - 1/10th of a second
         if(jumpHold > -2 && !jumping) {
           jumpHold = 0;
           gravMult = 1;
@@ -111,6 +114,12 @@ class Player {
       }
       pos.y = round(pos.y);
       vel.y = 0; //Reset y velocity to prevent bouncing
+    } else {
+      if(coyoteTime == 0) { //if no more grace frames are left
+        onGround = false;
+      } else {
+        coyoteTime --; //reduce coyote time
+      }
     }
     
     
