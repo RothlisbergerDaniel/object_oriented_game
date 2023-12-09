@@ -5,7 +5,7 @@ class Player {
   PVector recoil = new PVector(0, 0);
   int coyoteTime; //coyote time - frames the player can jump after leaving an edge
   int pNum; //player number identifier
-  float health; //player health
+  int health = 100; //player health
   float FRICTION = 0.8; //the rate at which the player decelerates
   float MOVESPEED = 1; //the rate at which the player accelerates
   float GRAVITY = 1;
@@ -17,11 +17,12 @@ class Player {
   
   int reload = 0;
   int weapon = 0;
+  int ammo = 8;
   int maxAmmo = 8; //ammo maximmum, changes with weapon
   int maxReload = 120; //time in frames to reload a fresh clip, changes with weapon
-  int clipsLeft = 3; //number of clips left before the weapon resets to default
+  int clipsLeft = 0; //number of clips left before the weapon resets to default
   
-  Player(float x, float y, int playerNumber, float pHealth) {
+  Player(float x, float y, int playerNumber, int pHealth) {
     pos.set(x, y);
     vel.set(0, 0);
     pNum = playerNumber;
@@ -36,13 +37,13 @@ class Player {
     rect(x, y, SIZE, SIZE); //draw the player - TO BE UPDATED AFTER I ADD ART
   }
   
-  void displayHealth(float x, float y, int health) {
+  void displayHealth(float x, float y, int pHealth) {
     stroke(0);
     fill(255, 0, 0);
     rect(x, y - 30, 50, 5);
     stroke(0);
-    fill(0 + 2.55 * (100 - health), 255, 0); //health bar gets yellower as it decreases
-    rect(x, y - 30, health / 2, 5);
+    fill(0 + 2.55 * (100 - pHealth), 255, 0); //health bar gets yellower as it decreases
+    rect(x, y - 30, pHealth / 2, 5);
   }
   
   void displayAmmo(float x, float y, int ammo, boolean doReload) {
@@ -199,6 +200,8 @@ class Player {
         println("Invalid weapon");
         break;
     }
+    
+    //ammo = maxAmmo; //reset max ammo?
   }
   
   void shoot(int weapon, int angle, int team) {
