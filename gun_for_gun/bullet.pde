@@ -29,7 +29,7 @@ class Bullet {
   
   void move() {
     if(delay == 0) {
-      vel.x *= friction; //slow bullets down if air resistance is applied
+      vel.mult(friction); //slow bullets down if air resistance is applied
       vel.y += gravity; //make them drop if gravity is applied
       
       pos.x += vel.x;
@@ -48,12 +48,23 @@ class Bullet {
         }
         bounces --;
       }
+    } else {
+      delay --;
+      if(delay == 0) {
+        if(team == 1) {
+          pos.set(p1.pos);
+        } else {
+          pos.set(p2.pos); //set bullet position correctly when spawned
+        }
+      }
     }
   }
   
   void display(float x, float y, float size) {
-    stroke(0);
-    circle(x, y, size); //simple primitive for display
+    if(delay == 0) {
+      stroke(0);
+      circle(x, y, size); //simple primitive for display
+    }
   }
   
   boolean checkOffscreen(float x, float y) {

@@ -178,22 +178,54 @@ class Player {
     switch(pWeapon) {
       
       case 0:
-        reload = 120;
         maxReload = 120;
         maxAmmo = 8;
         clipsLeft = 0; //default pistol. Set reload to maximum every time a new weapon is picked up, so that players can't immediately start using it.
         break;
       case 1:
-        reload = 240; //good rule of thumb: ammo * time between shots = clip reload time
-        maxReload = 240;
+        maxReload = 240; //good rule of thumb: ammo * time between shots = clip reload time
         maxAmmo = 4; //half of default
         clipsLeft = 2; //12 shots max = 360 total damage = 120 per clip: default is 80 per
         break;
       case 2:
-        reload = 300;
         maxReload = 300;
         maxAmmo = 100;
         clipsLeft = 1; //600 shots max = 600 total damage = 300 per clip - too much?
+        break;
+      case 3:
+        maxReload = 360;
+        maxAmmo = 1;
+        clipsLeft = 5;
+        break;
+      case 4:
+        maxReload = 250;
+        maxAmmo = 10;
+        clipsLeft = 2;
+        break;
+      case 5:
+        maxReload = 270;
+        maxAmmo = 6;
+        clipsLeft = 2;
+        break;
+      case 6:
+        maxReload = 160;
+        maxAmmo = 8;
+        clipsLeft = 4;
+        break;
+      case 7:
+        maxReload = 100;
+        maxAmmo = 10;
+        clipsLeft = 5;
+        break;
+      case 8:
+        maxReload = 250;
+        maxAmmo = 5;
+        clipsLeft = 2;
+        break;
+      case 9:
+        maxReload = 300;
+        maxAmmo = 5;
+        clipsLeft = 3;
         break;
       
       default:
@@ -201,12 +233,15 @@ class Player {
         break;
     }
     
-    //ammo = maxAmmo; //reset max ammo?
+    reload = maxReload;
+    if(weapon > 0) {
+      ammo = 0; //reset ammo if weapon is not default
+    }
   }
   
-  void shoot(int weapon, int angle, int team) {
+  void shoot(int weapon, int angle, int team, int vertical) {
     recoil = PVector.fromAngle(radians((180 - angle) * -1)); //get a PVector from the player's shot angle, invert it, and BOOM - recoil!
-    int variance = 0; //angle variance
+    float variance = 0; //angle variance
     
     switch(weapon) {
       
@@ -228,6 +263,56 @@ class Player {
         bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 1, 5, 15, 0, 0, 1, 0, 1, team));
         recoil.mult(2.2); //2.2x recoil
         break;
+      case 3:
+        reload = 150; //2.5s
+        variance = 0; //perfect accuracy
+        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 40, 6, 24, 0, 0, 3, 0, 1, team));
+        recoil.mult(18); //18x recoil :skull:
+        break;
+      case 4:
+        reload = 25; //~0.45s
+        variance = 1;
+        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 15, 12, 2, 0, 0, 1, 0, 1.025, team));
+        recoil.mult(3);
+        break;
+      case 5:
+        reload = 45; //0.75s
+        variance = 1.5;
+        angle -= 6;
+        for(int i = 0; i < 5; i++) {
+          bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance) + i * 3), 8, 8, 24, 0, 0, 2, 0, 0.9, team));
+        }
+        recoil.mult(17);
+        break;
+      case 6:
+        reload = 20; //0.33...s
+        variance = 3; //potential 18 degree spread??? :Pogchamp:
+        angle -= 6;
+        for(int i = 0; i < 4; i++) {
+          bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance) + i * 4), 4, 8, 24, 0, 0, 3, 0, 0.92, team)); //longer range and faster firing shotgun than weap 5, and give 'em 2 bounces just for fun
+        }
+        recoil.mult(10); //way less recoil than weap 5
+        break;
+      case 7:
+        reload = 10; //0.15...s
+        variance = 8; //HUGE spread for a chaotic gun
+        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 8, 10, 18, 0, 0, 5, 0, 1, team));
+        recoil.mult(3.5);
+        break;
+      case 8:
+        reload = 50; //~0.8s
+        variance = 2;
+        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 20, 12, 18, 12, 0, 5, 1, 0.98, team));
+        recoil.mult(6);
+        break;
+      case 9:
+        reload = 60; //1s
+        variance = 1;
+        for(int i = 0; i < 3; i++) {
+          bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 5, 10, 17, 0, i * 5, 1, 0, 1, team));
+        }
+        recoil.mult(3);
+        break;
         
       default:
         println("Invalid weapon");
@@ -235,7 +320,7 @@ class Player {
     }
     
     vel.x += recoil.x;
-    if(angle == 90) {  
+    if(vertical == 1) {  
       vel.y = recoil.y / 1; //may change if necessary
     } else {
       vel.y += recoil.y / 1; //may change if necessary
