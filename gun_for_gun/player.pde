@@ -247,7 +247,7 @@ class Player {
       
       case 0: //basic pistol
         reload = 30; //30 frames of delay between shots - 0.5s
-        variance = 2; //2 degrees of angle variance/spread
+        variance = 2.5; //2.5 degrees of angle variance/spread
         bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 10, 10, 20, 0, 0, 1, 0, 1, team));
         recoil.mult(2); //2x recoil multiplier
         break;
@@ -264,7 +264,7 @@ class Player {
         recoil.mult(2.2); //2.2x recoil
         break;
       case 3:
-        reload = 150; //2.5s
+        reload = 30; //0.5s, only matters when picking up ammo crates due to single-shot clips
         variance = 0; //perfect accuracy
         bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 40, 6, 24, 0, 0, 3, 0, 1, team));
         recoil.mult(18); //18x recoil :skull:

@@ -1,8 +1,11 @@
 class Crate {
   
   PVector pos = new PVector(0, 0);
-  int life;
-  int type;
+  int life; //crate lifespan and spawn delay
+  int type; //type of crate - weapon or ammo
+  float[] spawnsX = new float[3];
+  float[] spawnsY = new float[3]; //crate spawn positions, random each time
+  int spawnPos;
   
   float SIZE = 20;
   
@@ -10,6 +13,12 @@ class Crate {
     pos.set(x, y);
     life = lifespan;
     type = dropType;
+    spawnsX[0] = x; //width / 2
+    spawnsY[0] = y; //height / 2 + 86
+    spawnsX[1] = width / 2;
+    spawnsY[1] = 278;
+    spawnsX[2] = width / 2;
+    spawnsY[2] = height - 106; //set potential crate spawn points
     
   }
   
@@ -19,7 +28,7 @@ class Crate {
       if(checkCollision(pos.x, pos.y, p1.pos.x, p1.pos.y, SIZE, p1.SIZE) || checkCollision(pos.x, pos.y, p2.pos.x, p2.pos.y, SIZE, p2.SIZE)) { //outline in white or something, idk
         stroke(255);
       } else {
-        stroke(0, 255 * type, 0);
+        stroke(255 * type, 255 * type, 0);
       }
       rect(pos.x, pos.y, SIZE, SIZE);
     } else if(life < 0) { //negative lifespan means the crate is on cooldown
@@ -27,6 +36,8 @@ class Crate {
       if(life == 0) { //if the crate has made it to neutral
          life = 600; //10 seconds, may change if it's too long or short later
          type = int(random(0, 2)); //0 = weapon, 1 = ammo for current weapon. High is 2 to allow even distribution
+         spawnPos = int(random(0, 3));
+         pos.set(spawnsX[spawnPos], spawnsY[spawnPos]);
       }
     } else {
       life = int(random(3, 10)) * -60; //set spawn delay to random value between 3 and 10 seconds

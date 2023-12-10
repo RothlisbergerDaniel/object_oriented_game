@@ -10,9 +10,10 @@ class Tile {
   }
   
   void display(float x, float y, float w, float h) {
-    noFill();
+    fill(0);
     stroke(0);
     rect(x, y, w, h); //display rectangle primitive
+    noFill();
   }
   
 }

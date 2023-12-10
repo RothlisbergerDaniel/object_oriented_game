@@ -89,6 +89,7 @@ void draw() {
       crate.life = int(random(3, 10)) * -60; //remove crate, set crate spawn delay to a random value between 3 and 10 seconds
     } else if(crate.type == 1 && p1.weapon > 0 && p1.clipsLeft < 10) { //if ammo recharge crate and not default weapon and not at max clips
       p1.clipsLeft ++; //add a full clip
+      p1.reload = p1.maxReload; //reset shot cooldown so that the player doesn't waste ammo picking up an ammo crate
       crate.life = int(random(3, 10)) * -60; //reset crate
     }    
   }
@@ -98,6 +99,7 @@ void draw() {
       crate.life = int(random(3, 10)) * -60;
     } else if(crate.type == 1 && p2.weapon > 0 && p2.clipsLeft < 10) {
       p2.clipsLeft ++;
+      p2.reload = p2.maxReload;
       crate.life = int(random(3, 10)) * -60; //same again for p2
     }    
   }
@@ -173,7 +175,7 @@ void createMap() {
   for(int i = 0; i < MAPHEIGHT; i++) { //vertical loop, iterates y times, where y is the height of the map
     for(int j = 0; j < MAPWIDTH; j++) { //horizontal loop, iterates x times, where x is the width of the map
       if(char(MAP.charAt(j + i * MAPWIDTH)) == 'x') {
-        tiles.add(new Tile(32 * j + 16, 32 * i +16, 32, 32));
+        tiles.add(new Tile(32 * j + 16, 32 * i + 16, 32, 32));
       }
     }
   }
