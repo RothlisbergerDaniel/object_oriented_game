@@ -1,21 +1,23 @@
 int p1Horizontal;
-int p1Vertical;
+int p1Vertical = 0;
 boolean p1Jump = false;
 boolean p1Shoot = false; //controls p1
 int p1Aim = 0; //default aim direction
-int p1LastVertical; //for preventing superjumps :(
+int p1LastVertical = 0; //for preventing superjumps :(
 int p2Horizontal;
-int p2Vertical;
+int p2Vertical = 0;
 boolean p2Jump = false;
 boolean p2Shoot = false; //controls p2
 int p2Aim = 180; //default aim direction
-int p2LastVertical;
+int p2LastVertical = 0;
 
 Player p1;
 Player p2;
 Crate crate;
 ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 ArrayList<Tile> tiles = new ArrayList<Tile>(); //change tile arraylist to a regular array! //define objects and object lists
+
+PImage bg; //initialize PImage for background
 
 int MAPWIDTH = 40;
 int MAPHEIGHT = 32; //Map width and height, in tiles
@@ -60,13 +62,17 @@ void setup() {
   noStroke();
   p1 = new Player(100, height / 2 + 72, 1, 100);
   p2 = new Player(width - 100, height / 2 + 72, 2, 100);
-  crate = new Crate(width / 2, height / 2 + 86, 0, 600);
+  crate = new Crate(width / 2, height / 2 + 84, 0, 600);
   rectMode(CENTER);
   createMap(); //load tiles
+  
+  imageMode(CENTER);
+  bg = loadImage("gun_for_gun_bg.png"); //set background to bg image
 }
 
 void draw() {
   background(150);
+  image(bg, width / 2, height / 2);
   
   p1.move(p1Horizontal, p1Vertical, p1Jump);
   p2.move(p2Horizontal, p2Vertical, p2Jump); //move players
@@ -89,7 +95,9 @@ void draw() {
       crate.life = int(random(3, 10)) * -60; //remove crate, set crate spawn delay to a random value between 3 and 10 seconds
     } else if(crate.type == 1 && p1.weapon > 0 && p1.clipsLeft < 10) { //if ammo recharge crate and not default weapon and not at max clips
       p1.clipsLeft ++; //add a full clip
-      p1.reload = p1.maxReload; //reset shot cooldown so that the player doesn't waste ammo picking up an ammo crate
+      if(p1.ammo != 0) { //make sure the player's not already reloading
+        p1.reload = p1.maxReload / p1.maxAmmo; //reset shot cooldown so that the player doesn't waste ammo picking up an ammo crate
+      }
       crate.life = int(random(3, 10)) * -60; //reset crate
     }    
   }
@@ -99,7 +107,9 @@ void draw() {
       crate.life = int(random(3, 10)) * -60;
     } else if(crate.type == 1 && p2.weapon > 0 && p2.clipsLeft < 10) {
       p2.clipsLeft ++;
-      p2.reload = p2.maxReload;
+      if(p2.ammo != 0) {
+        p2.reload = p2.maxReload / p2.maxAmmo;
+      }
       crate.life = int(random(3, 10)) * -60; //same again for p2
     }    
   }
@@ -164,10 +174,10 @@ void draw() {
     }
   }
   
-  for(int i = 0; i < tiles.size(); i++) {
+  /*for(int i = 0; i < tiles.size(); i++) {
     Tile current = tiles.get(i);
     current.display(current.pos.x, current.pos.y, current.dimensions.x, current.dimensions.y);
-  }
+  }*/ //disable displaying tiles - unnecessary after background has been added, and tiles don't need to be shown to have collision
   
 }
 
@@ -221,7 +231,7 @@ void keyPressed() {
   }
   
   p1Horizontal = constrain(p1Horizontal, -1, 1);
-  p2Horizontal = constrain(p2Horizontal, -1, 1);
+  p2Horizontal = constrain(p2Horizontal, -1, 1); //keep movement in reasonable bounds
   
   p1Vertical = constrain(p1Vertical, -1, 1);
   if(abs(p1Vertical) > 0) {

@@ -9,6 +9,8 @@ class Crate {
   
   float SIZE = 20;
   
+  PImage[] crates = new PImage[2];
+  
   Crate(float x, float y, int dropType, int lifespan) {
     pos.set(x, y);
     life = lifespan;
@@ -16,9 +18,12 @@ class Crate {
     spawnsX[0] = x; //width / 2
     spawnsY[0] = y; //height / 2 + 86
     spawnsX[1] = width / 2;
-    spawnsY[1] = 278;
+    spawnsY[1] = 272;
     spawnsX[2] = width / 2;
-    spawnsY[2] = height - 106; //set potential crate spawn points
+    spawnsY[2] = height - 112; //set potential crate spawn points
+    
+    crates[0] = loadImage("gun_for_gun_crates0.png");
+    crates[1] = loadImage("gun_for_gun_crates1.png"); //load crate images
     
   }
   
@@ -30,6 +35,10 @@ class Crate {
       } else {
         stroke(255 * type, 255 * type, 0);
       }
+      tint(255, 255 - (300 - life) / 2);
+      image(crates[type], pos.x, pos.y);
+      tint(255, 255);
+      strokeWeight(2);
       rect(pos.x, pos.y, SIZE, SIZE);
     } else if(life < 0) { //negative lifespan means the crate is on cooldown
       life ++;
@@ -42,6 +51,7 @@ class Crate {
     } else {
       life = int(random(3, 10)) * -60; //set spawn delay to random value between 3 and 10 seconds
     }
+    strokeWeight(1);
   }
   
   
