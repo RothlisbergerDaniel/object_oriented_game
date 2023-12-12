@@ -49,7 +49,7 @@ class Crate {
          pos.set(spawnsX[spawnPos], spawnsY[spawnPos]);
       }
     } else {
-      life = int(random(8, 16)) * -60; //set spawn delay to random value between 8 and 15 seconds
+      life = int(random(5, 11)) * -60; //set spawn delay to random value between 8 and 15 seconds
     }
     strokeWeight(1);
   }

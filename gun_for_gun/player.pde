@@ -228,7 +228,7 @@ class Player {
         clipsLeft = 1; //600 shots max = 600 total damage = 300 per clip - too much?
         break;
       case 3:
-        maxReload = round(360 / 1.5);
+        maxReload = 300; //keep this one long. It does too much damage otherwise, and it's too easy to hit shots.
         maxAmmo = 1;
         clipsLeft = 5;
         break;
@@ -245,7 +245,7 @@ class Player {
       case 6:
         maxReload = round(160 / 1.5);
         maxAmmo = 8;
-        clipsLeft = 4;
+        clipsLeft = 3;
         break;
       case 7:
         maxReload = round(100 / 1.5);
@@ -306,21 +306,21 @@ class Player {
       case 3: //sniper
         reload = 30; //0.5s, only matters when picking up ammo crates due to single-shot clips
         variance = 0; //perfect accuracy
-        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 40, 6, 24, 0, 0, 3, 0, 1, team, 0)); //size 6, default
-        recoil.mult(18); //18x recoil :skull:
+        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 40, 8, 24, 0, 0, 3, 0, 1, team, 0)); //size 8, default
+        recoil.mult(24); //24x recoil :skull:
         break;
       case 4: //pressure gun
         reload = 25; //~0.45s
         variance = 1;
-        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 15, 12, 2, 0, 0, 1, 0, 1.025, team, 2)); //size 12, "pressure" bullets
+        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 10, 12, 1.5, 0, 0, 1, 0, 1.025, team, 2)); //size 12, "pressure" bullets
         recoil.mult(3);
         break;
       case 5: //shotgun a
         reload = 45; //0.75s
         variance = 1.5;
-        angle -= 6;
+        angle -= 8;
         for(int i = 0; i < 5; i++) {
-          bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance) + i * 3), 8, 8, 24, 0, 0, 2, 0, 0.9, team, 0)); //size 8, default
+          bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance) + i * 4), 7, 8, 24, 0, 0, 2, 0, 0.9, team, 0)); //size 8, default
         }
         angle -= 6; //reset angle after spread
         recoil.mult(17);
@@ -330,7 +330,7 @@ class Player {
         variance = 3; //potential 18 degree spread??? :Pogchamp:
         angle -= 6;
         for(int i = 0; i < 4; i++) {
-          bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance) + i * 4), 3, 8, 24, 0, 0, 3, 0, 0.92, team, 0)); //longer range and faster firing shotgun than weap 5, and give 'em 2 bounces just for fun
+          bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance) + i * 4), 4, 8, 24, 0, 0, 3, 0, 0.92, team, 0)); //longer range and faster firing shotgun than weap 5, and give 'em 2 bounces just for fun
         }
         angle -= 6;
         recoil.mult(10); //way less recoil than weap 5
@@ -351,7 +351,7 @@ class Player {
         reload = 60; //1s
         variance = 1;
         for(int i = 0; i < 3; i++) {
-          bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 5, 10, 17, 0, i * 5, 1, 0, 1, team, 0)); //size 10, default
+          bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 6, 10, 17, 0, i * 5, 1, 0, 1, team, 0)); //size 10, default
         }
         recoil.mult(3);
         break;

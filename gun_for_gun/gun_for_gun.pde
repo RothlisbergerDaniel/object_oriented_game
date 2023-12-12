@@ -17,7 +17,8 @@ Player p1;
 Player p2;
 Crate crate;
 ArrayList<Bullet> bullets = new ArrayList<Bullet>();
-ArrayList<Tile> tiles = new ArrayList<Tile>(); //change tile arraylist to a regular array! //define objects and object lists
+ArrayList<Tile> tiles = new ArrayList<Tile>(); //change tile arraylist to a regular array? //define objects and object lists
+ArrayList<DeathParticle> deathParticles = new ArrayList<DeathParticle>(); //store death particles
 
 PImage bg; //initialize PImage for background
 PImage start; //same for start screen
@@ -81,7 +82,7 @@ void draw() {
     image(start, width / 2, height / 2);
     if(p1Shoot && p2Shoot) {
       reset();
-      inGame = !inGame;
+      inGame = true; //start game
     }
   } else {
   
@@ -103,25 +104,25 @@ void draw() {
     if(p1Shoot && crate.checkCollision(crate.pos.x, crate.pos.y, p1.pos.x, p1.pos.y, crate.SIZE, p1.SIZE) && crate.life > 0) {
       if(crate.type == 0) { //weapon crate
         p1.changeWeapon(int(random(1, 11))); //change weapon from one to max + 1 - not including default weapon
-        crate.life = int(random(8, 16)) * -60; //remove crate, set crate spawn delay to a random value between 8 and 15 seconds
+        crate.life = int(random(5, 11)) * -60; //remove crate, set crate spawn delay to a random value between 5 and 10 seconds
       } else if(crate.type == 1 && p1.weapon > 0 && p1.clipsLeft < 10) { //if ammo recharge crate and not default weapon and not at max clips
         p1.clipsLeft ++; //add a full clip
         if(p1.ammo != 0) { //make sure the player's not already reloading
           p1.reload = p1.maxReload / p1.maxAmmo; //reset shot cooldown so that the player doesn't waste ammo picking up an ammo crate
         }
-        crate.life = int(random(3, 10)) * -60; //reset crate
+        crate.life = int(random(5, 11)) * -60; //reset crate
       }    
     }
     if(p2Shoot && crate.checkCollision(crate.pos.x, crate.pos.y, p2.pos.x, p2.pos.y, crate.SIZE, p2.SIZE) && crate.life > 0) {
       if(crate.type == 0) {
         p2.changeWeapon(int(random(1, 11)));
-        crate.life = int(random(3, 10)) * -60;
+        crate.life = int(random(5, 11)) * -60;
       } else if(crate.type == 1 && p2.weapon > 0 && p2.clipsLeft < 10) {
         p2.clipsLeft ++;
         if(p2.ammo != 0) {
           p2.reload = p2.maxReload / p2.maxAmmo;
         }
-        crate.life = int(random(8, 16)) * -60; //same again for p2
+        crate.life = int(random(5, 11)) * -60; //same again for p2
       }    
     }
   
@@ -179,8 +180,14 @@ void draw() {
         i --; //decrement i to keep place in list
       
         if(p1.health < 1 || p2.health < 1) {
+          if(p1.health < 1) {
+            spawnParticles(p1.pos.x, p1.pos.y, 5, 25, 1);
+          }
+          if(p2.health < 1) {
+            spawnParticles(p2.pos.x, p2.pos.y, 5, 25, 2); //not exclusive to allow for ties - would have to be frame-perfect, but it will still count.
+          }
           //end game, return to menu;
-          inGame = !inGame; //sets to false
+          inGame = false; //return to menu
           p1Shoot = false;
           p2Shoot = false; //prevent players from instantly starting a new game if shoot is still held down
           //break;
@@ -193,6 +200,8 @@ void draw() {
       current.display(current.pos.x, current.pos.y, current.dimensions.x, current.dimensions.y);
     }*/ //disable displaying tiles - unnecessary after background has been added, and tiles don't need to be shown to have collision
   }
+  
+  runParticles(); //display all particles
 }
 
 void reset() {
@@ -201,6 +210,10 @@ void reset() {
   p1 = new Player(100, height / 2 + 72, 1, 100);
   p2 = new Player(width - 100, height / 2 + 72, 2, 100);
   crate = new Crate(width / 2, height / 2 + 84, 0, 600);
+  bullets = new ArrayList<Bullet>(); //remove bullets from previous round in case a bunch are still onscreen
+  
+  p1Aim = 0;
+  p2Aim = 180; //reset player aim
 }
 
 void createMap() {
@@ -210,6 +223,33 @@ void createMap() {
         tiles.add(new Tile(32 * j + 16, 32 * i + 16, 32, 32));
       }
     }
+  }
+}
+
+void spawnParticles(float x, float y, float velMag, int count, int team) {
+  for(int i = 0; i < count; i++) {
+    deathParticles.add(new DeathParticle(x, y, PVector.random2D(), velMag * random(0.8, 1.2), /*add some variance to particle distance */ 0.98, team));
+  }
+  
+}
+
+void runParticles() {
+  for(int i = 0; i < deathParticles.size(); i++) {
+    DeathParticle current = deathParticles.get(i);
+    current.update(10);
+    if(cull(current, 0.1)) {
+      deathParticles.remove(i); //remove current particle
+      i--;
+    }
+  }
+}
+  
+
+boolean cull(DeathParticle particle, float cutoff) {
+  if(particle.vel.mag() < cutoff) {
+    return true;
+  } else {
+    return false;
   }
 }
 
