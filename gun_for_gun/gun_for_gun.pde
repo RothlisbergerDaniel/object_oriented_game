@@ -184,7 +184,7 @@ void draw() {
             spawnParticles(p1.pos.x, p1.pos.y, 5, 25, 1);
           }
           if(p2.health < 1) {
-            spawnParticles(p2.pos.x, p2.pos.y, 5, 25, 2); //not exclusive to allow for ties - would have to be frame-perfect, but it will still count.
+            spawnParticles(p2.pos.x, p2.pos.y, 5, 25, 2); //not exclusive to allow for ties - would have to be frame-perfect, but it will still count, in which case both players will spawn particles
           }
           //end game, return to menu;
           inGame = false; //return to menu
