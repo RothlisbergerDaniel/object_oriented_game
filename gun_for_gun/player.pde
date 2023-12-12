@@ -24,7 +24,7 @@ class Player {
   int clipsLeft = 0; //number of clips left before the weapon resets to default
   
   PImage[] players = new PImage[2]; //initialize player image container
-  PImage[] weapons = new PImage[10]; //initialize weapon image container
+  PImage[] weapons = new PImage[11]; //initialize weapon image container
   
   
   Player(float x, float y, int playerNumber, int pHealth) {
@@ -44,7 +44,7 @@ class Player {
     players[0] = loadImage("gun_for_gun_players0.png");
     players[1] = loadImage("gun_for_gun_players1.png"); //load player images
     
-    for(int i = 0; i < 10; i++) {
+    for(int i = 0; i < 11; i++) {
       String imageName = "gun_for_gun_weapons" + i + ".png"; //load from list to make code more readable
       weapons[i] = loadImage(imageName);
     }
@@ -218,7 +218,7 @@ class Player {
         clipsLeft = 0; //default pistol. Set reload to maximum every time a new weapon is picked up, so that players can't immediately start using it.
         break;
       case 1:
-        maxReload = round(240 / 1.5); //good rule of thumb: ammo * time between shots = clip reload time, then divide by 2
+        maxReload = round(240 / 1.5); //good rule of thumb: ammo * time between shots = clip reload time, then divide by 1.5 to make things a bit faster-paced
         maxAmmo = 4; //half of default
         clipsLeft = 2; //12 shots max = 360 total damage = 120 per clip: default is 80 per
         break;
@@ -261,6 +261,11 @@ class Player {
         maxReload = round(300 / 1.5);
         maxAmmo = 5;
         clipsLeft = 3;
+        break;
+      case 10:
+        maxReload = round(360 / 1.5);
+        maxAmmo = 4;
+        clipsLeft = 2;
         break;
       
       default:
@@ -349,6 +354,12 @@ class Player {
           bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 5, 10, 17, 0, i * 5, 1, 0, 1, team, 0)); //size 10, default
         }
         recoil.mult(3);
+        break;
+      case 10: //homing missile
+        reload = 90; //1.5s
+        variance = 0; //no point making it inaccurate as it'll track anyway
+        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 20, 18, 1.5, 0.25, 0, 1, 0, 1.025, team, 4)); //size 18, "rocket" bullets - add a tiny bit of initial y vel so it doesn't eat dirt instantly
+        recoil.mult(9);
         break;
         
       default:

@@ -102,8 +102,8 @@ void draw() {
   
     if(p1Shoot && crate.checkCollision(crate.pos.x, crate.pos.y, p1.pos.x, p1.pos.y, crate.SIZE, p1.SIZE) && crate.life > 0) {
       if(crate.type == 0) { //weapon crate
-        p1.changeWeapon(int(random(1, 10))); //change weapon from one to max + 1 - not including default weapon
-        crate.life = int(random(3, 10)) * -60; //remove crate, set crate spawn delay to a random value between 3 and 10 seconds
+        p1.changeWeapon(int(random(1, 11))); //change weapon from one to max + 1 - not including default weapon
+        crate.life = int(random(8, 16)) * -60; //remove crate, set crate spawn delay to a random value between 8 and 15 seconds
       } else if(crate.type == 1 && p1.weapon > 0 && p1.clipsLeft < 10) { //if ammo recharge crate and not default weapon and not at max clips
         p1.clipsLeft ++; //add a full clip
         if(p1.ammo != 0) { //make sure the player's not already reloading
@@ -114,14 +114,14 @@ void draw() {
     }
     if(p2Shoot && crate.checkCollision(crate.pos.x, crate.pos.y, p2.pos.x, p2.pos.y, crate.SIZE, p2.SIZE) && crate.life > 0) {
       if(crate.type == 0) {
-        p2.changeWeapon(int(random(1, 10)));
+        p2.changeWeapon(int(random(1, 11)));
         crate.life = int(random(3, 10)) * -60;
       } else if(crate.type == 1 && p2.weapon > 0 && p2.clipsLeft < 10) {
         p2.clipsLeft ++;
         if(p2.ammo != 0) {
           p2.reload = p2.maxReload / p2.maxAmmo;
         }
-        crate.life = int(random(3, 10)) * -60; //same again for p2
+        crate.life = int(random(8, 16)) * -60; //same again for p2
       }    
     }
   

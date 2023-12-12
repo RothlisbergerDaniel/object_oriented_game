@@ -13,7 +13,7 @@ class Bullet {
   float gravity; //amount of gravity applied, 0 for no drop
   float friction; //air friction, 1 for neutral, <1 to make the bullet slow down as it flies, >1 to make it speed up (e.g. rockets)
   
-  PImage[] bullets = new PImage[4]; //initialize bullet graphics container
+  PImage[] bullets = new PImage[5]; //initialize bullet graphics container
   
   
   Bullet(float x, float y, float dir, int bulletDamage, float bulletSize, float velocity, float initY, int spawnDelay, int maxBounces, float grav, float frict, int bulletTeam, int bulletType) {
@@ -30,32 +30,47 @@ class Bullet {
     team = bulletTeam;
     type = bulletType;
     
-    for(int i = 0; i < 4; i++) {
+    for(int i = 0; i < 5; i++) {
       bullets[i] = loadImage("gun_for_gun_bullets" + i + ".png"); //load images in a list
     }
   }
   
   void move() {
     if(delay == 0) {
-      vel.mult(friction); //slow bullets down if air resistance is applied
+      vel.mult(friction); //slow bullets down if air resistance < 1 is applied, or speeds them up if air resistance > 1
       vel.y += gravity; //make them drop if gravity is applied
       
       pos.x += vel.x;
       if(p1.checkCollision(pos.x, pos.y, size)) { //hijack the collision detection script in class Player to save on space and improve readability
-        vel.x *= -1;
-        pos.x += vel.x; //push bullet out of the wall and back the way it came. Useful for especially slow projectiles.
+        if(bounces > 1) {
+          vel.x *= -1;
+          pos.x += vel.x; //push bullet out of the wall and back the way it came. Useful for especially slow projectiles.
+        }
         bounces --; //subtract bounces if applicable
       }
       
       pos.y += vel.y;
       if(p1.checkCollision(pos.x, pos.y, size)) { //split x and y collision scripts into two parts to properly register horizontal and vertical bounces
-        vel.y *= -1;
-        pos.y += vel.y;
-        if(gravity > 0) {
-          vel.y *= 0.8; //prevent bullets from maintaining vertical height or becoming super balls
+        if(bounces > 1) {
+          vel.y *= -1;
+          pos.y += vel.y;
+          if(gravity > 0) {
+            vel.y *= 0.8; //prevent bullets from maintaining vertical height or becoming super balls
+          }
         }
         bounces --;
       }
+    
+    if(type == 4) { //if homing bullet
+      float angleDiff;
+      if(team == 1) {
+        angleDiff = atan2(p2.pos.y - pos.y, p2.pos.x - pos.x) - vel.heading();
+        vel.rotate(angleDiff * (vel.mag() / 100));
+      } else {
+        
+      }
+    }
+    
     } else {
       delay --;
       if(delay == 0) {
