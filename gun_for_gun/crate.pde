@@ -33,7 +33,7 @@ class Crate {
       if(checkCollision(pos.x, pos.y, p1.pos.x, p1.pos.y, SIZE, p1.SIZE) || checkCollision(pos.x, pos.y, p2.pos.x, p2.pos.y, SIZE, p2.SIZE)) { //outline in white or something, idk
         stroke(255);
       } else {
-        stroke(255 * type, 255 * type, 0);
+        stroke(0);
       }
       tint(255, 255 - (300 - life) / 2);
       image(crates[type], pos.x, pos.y);

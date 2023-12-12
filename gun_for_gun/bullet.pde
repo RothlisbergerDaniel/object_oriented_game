@@ -8,12 +8,15 @@ class Bullet {
   float size;
   int delay; //delay between shots
   int team; //either 1 or 2
+  int type; //bullet type
   int bounces; //times the bullet can deflect
   float gravity; //amount of gravity applied, 0 for no drop
   float friction; //air friction, 1 for neutral, <1 to make the bullet slow down as it flies, >1 to make it speed up (e.g. rockets)
   
+  PImage[] bullets = new PImage[4]; //initialize bullet graphics container
   
-  Bullet(float x, float y, float dir, int bulletDamage, float bulletSize, float velocity, float initY, int spawnDelay, int maxBounces, float grav, float frict, int bulletTeam) {
+  
+  Bullet(float x, float y, float dir, int bulletDamage, float bulletSize, float velocity, float initY, int spawnDelay, int maxBounces, float grav, float frict, int bulletTeam, int bulletType) {
     pos.set(x, y);
     damage = bulletDamage;
     size = bulletSize;
@@ -25,6 +28,11 @@ class Bullet {
     gravity = grav;
     friction = frict;
     team = bulletTeam;
+    type = bulletType;
+    
+    for(int i = 0; i < 4; i++) {
+      bullets[i] = loadImage("gun_for_gun_bullets" + i + ".png"); //load images in a list
+    }
   }
   
   void move() {
@@ -63,7 +71,12 @@ class Bullet {
   void display(float x, float y, float size) {
     if(delay == 0) {
       stroke(0);
-      circle(x, y, size); //simple primitive for display
+      //circle(x, y, size); //simple primitive for display
+      pushMatrix();
+      translate(x, y);
+      rotate(vel.heading()); //point the bullet towards its heading
+      image(bullets[type], 0, 0, bullets[type].width * (size / 10), bullets[type].height * (size / 10));
+      popMatrix(); //push and pop to maintain regular transform
     }
   }
   

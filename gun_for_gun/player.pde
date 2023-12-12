@@ -51,7 +51,7 @@ class Player {
     
   }
   
-  void display(float x, float y) {
+  void display(float x, float y, int angle) {
     //stroke(0);
     //rect(x, y, SIZE, SIZE); //draw the player - TO BE UPDATED AFTER I ADD ART
     
@@ -59,8 +59,14 @@ class Player {
     pushMatrix(); //push and pop matrix to maintain transform
     scale(prevDir, 1); //scale to flip image based on last horizontal direction    
     image(players[pNum - 1], x * prevDir, y); //pNum - 1 guarantees correct player image
-    image(weapons[weapon], x * prevDir, y);
-    popMatrix();
+    translate(x * prevDir, y); //adjust origin to player position to allow weapons to be rotated around the center
+    if(prevDir > 0) {
+      rotate(radians(angle)); //rotate gun appropriately when facing right
+    } else {
+      rotate(radians(angle * prevDir - 180)); //subtract 180 and invert angle to get appropriate angle when facing left
+    }
+    image(weapons[weapon], 0, 0);
+    popMatrix(); //pop to maintain previous transform
   }
   
   void displayHealth(float x, float y, int pHealth) {
@@ -207,52 +213,52 @@ class Player {
     switch(pWeapon) {
       
       case 0:
-        maxReload = 120;
+        maxReload = round(120 / 1.5);
         maxAmmo = 8;
         clipsLeft = 0; //default pistol. Set reload to maximum every time a new weapon is picked up, so that players can't immediately start using it.
         break;
       case 1:
-        maxReload = 240; //good rule of thumb: ammo * time between shots = clip reload time
+        maxReload = round(240 / 1.5); //good rule of thumb: ammo * time between shots = clip reload time, then divide by 2
         maxAmmo = 4; //half of default
         clipsLeft = 2; //12 shots max = 360 total damage = 120 per clip: default is 80 per
         break;
       case 2:
-        maxReload = 300;
-        maxAmmo = 100;
+        maxReload = round(360 / 1.5);
+        maxAmmo = 120;
         clipsLeft = 1; //600 shots max = 600 total damage = 300 per clip - too much?
         break;
       case 3:
-        maxReload = 360;
+        maxReload = round(360 / 1.5);
         maxAmmo = 1;
         clipsLeft = 5;
         break;
       case 4:
-        maxReload = 250;
+        maxReload = round(250 / 1.5);
         maxAmmo = 10;
         clipsLeft = 2;
         break;
       case 5:
-        maxReload = 270;
+        maxReload = round(270 / 1.5);
         maxAmmo = 6;
         clipsLeft = 2;
         break;
       case 6:
-        maxReload = 160;
+        maxReload = round(160 / 1.5);
         maxAmmo = 8;
         clipsLeft = 4;
         break;
       case 7:
-        maxReload = 100;
+        maxReload = round(100 / 1.5);
         maxAmmo = 10;
         clipsLeft = 5;
         break;
       case 8:
-        maxReload = 250;
+        maxReload = round(250 / 1.5);
         maxAmmo = 5;
         clipsLeft = 2;
         break;
       case 9:
-        maxReload = 300;
+        maxReload = round(300 / 1.5);
         maxAmmo = 5;
         clipsLeft = 3;
         break;
@@ -277,31 +283,31 @@ class Player {
       case 0: //basic pistol
         reload = 30; //30 frames of delay between shots - 0.5s
         variance = 2.5; //2.5 degrees of angle variance/spread
-        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 10, 10, 20, 0, 0, 1, 0, 1, team));
+        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 10, 10, 20, 0, 0, 1, 0, 1, team, 0)); //size 10, default bullets
         recoil.mult(2); //2x recoil multiplier
         break;
-      case 1: //mortar a
+      case 1: //mortar a, uses "mortar" bullets
         reload = 60; //1s
         variance = 2; //2 degrees
-        bullets.add(new Bullet(pos.x, /*x */ pos.y, /*y */ radians(angle + random(-variance, variance)), /*angle (degrees) */ 30, /*damage */ 15, /*size */ 10, /*initial velocity */ 10, /*initial y velocity, useful for weapons with drop */ 0, /*bullet spawn delay */ 3, /*max bounces */ 1, /*gravity */ 0.99, /*air friction */ 1 /*team */));
+        bullets.add(new Bullet(pos.x, /*x */ pos.y, /*y */ radians(angle + random(-variance, variance)), /*angle (degrees) */ 30, /*damage */ 15, /*size */ 10, /*initial velocity */ 10, /*initial y velocity, useful for weapons with drop */ 0, /*bullet spawn delay */ 3, /*max bounces */ 1, /*gravity */ 0.99, /*air friction */ 1, /*team */ 1 /*type */));
         recoil.mult(15); //15x recoil
         break;
       case 2: //machine gun(!)
         reload = 3; //0.05s
         variance = 3; //3 deg
-        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 2, 5, 15, 0, 0, 1, 0, 1, team));
+        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 1, 5, 15, 0, 0, 1, 0, 1, team, 0)); //size 5, default
         recoil.mult(2.2); //2.2x recoil
         break;
       case 3: //sniper
         reload = 30; //0.5s, only matters when picking up ammo crates due to single-shot clips
         variance = 0; //perfect accuracy
-        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 40, 6, 24, 0, 0, 3, 0, 1, team));
+        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 40, 6, 24, 0, 0, 3, 0, 1, team, 0)); //size 6, default
         recoil.mult(18); //18x recoil :skull:
         break;
       case 4: //pressure gun
         reload = 25; //~0.45s
         variance = 1;
-        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 15, 12, 2, 0, 0, 1, 0, 1.025, team));
+        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 15, 12, 2, 0, 0, 1, 0, 1.025, team, 2)); //size 12, "pressure" bullets
         recoil.mult(3);
         break;
       case 5: //shotgun a
@@ -309,17 +315,17 @@ class Player {
         variance = 1.5;
         angle -= 6;
         for(int i = 0; i < 5; i++) {
-          bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance) + i * 3), 8, 8, 24, 0, 0, 2, 0, 0.9, team));
+          bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance) + i * 3), 8, 8, 24, 0, 0, 2, 0, 0.9, team, 0)); //size 8, default
         }
         angle -= 6; //reset angle after spread
         recoil.mult(17);
         break;
-      case 6: //shotty b
+      case 6: //shotty b, size and bullets same as above
         reload = 20; //0.33...s
         variance = 3; //potential 18 degree spread??? :Pogchamp:
         angle -= 6;
         for(int i = 0; i < 4; i++) {
-          bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance) + i * 4), 4, 8, 24, 0, 0, 3, 0, 0.92, team)); //longer range and faster firing shotgun than weap 5, and give 'em 2 bounces just for fun
+          bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance) + i * 4), 3, 8, 24, 0, 0, 3, 0, 0.92, team, 0)); //longer range and faster firing shotgun than weap 5, and give 'em 2 bounces just for fun
         }
         angle -= 6;
         recoil.mult(10); //way less recoil than weap 5
@@ -327,20 +333,20 @@ class Player {
       case 7: //superball
         reload = 10; //0.15...s
         variance = 8; //HUGE spread for a chaotic gun
-        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 8, 10, 18, 0, 0, 5, 0, 1, team));
+        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 5, 10, 18, 0, 0, 5, 0, 1, team, 3)); //size 10, "bouncy" bullets
         recoil.mult(3.5);
         break;
       case 8: //bouncer b
         reload = 50; //~0.8s
         variance = 2;
-        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 20, 12, 18, 12, 0, 5, 1, 0.98, team));
+        bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 20, 12, 18, 12, 0, 5, 1, 0.98, team, 1)); //size 12, "mortar"
         recoil.mult(6);
         break;
       case 9: //triple
         reload = 60; //1s
         variance = 1;
         for(int i = 0; i < 3; i++) {
-          bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 5, 10, 17, 0, i * 5, 1, 0, 1, team));
+          bullets.add(new Bullet(pos.x, pos.y, radians(angle + random(-variance, variance)), 5, 10, 17, 0, i * 5, 1, 0, 1, team, 0)); //size 10, default
         }
         recoil.mult(3);
         break;

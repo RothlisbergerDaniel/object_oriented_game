@@ -79,15 +79,15 @@ void draw() {
   
   crate.update();
   
-  p1.display(p1.pos.x, p1.pos.y);
-  p1.displayHealth(p1.pos.x, p1.pos.y, p1.health);
-  p1.displayAmmo(p1.pos.x, p1.pos.y, p1.ammo, p1.ammo > 0);
-  p2.display(p2.pos.x, p2.pos.y); //show players
-  p2.displayHealth(p2.pos.x, p2.pos.y, p2.health); //and player health
-  p2.displayAmmo(p2.pos.x, p2.pos.y, p2.ammo, p2.ammo > 0); //and ammo
-  
   p1Aim = p1.getPlayerAngle(p1Horizontal, p1Vertical, p1Aim);
   p2Aim = p2.getPlayerAngle(p2Horizontal, p2Vertical, p2Aim); //gets angle based on keys held
+  
+  p1.display(p1.pos.x, p1.pos.y, p1Aim);
+  p1.displayHealth(p1.pos.x, p1.pos.y, p1.health);
+  p1.displayAmmo(p1.pos.x, p1.pos.y, p1.ammo, p1.ammo > 0);
+  p2.display(p2.pos.x, p2.pos.y, p2Aim); //show players
+  p2.displayHealth(p2.pos.x, p2.pos.y, p2.health); //and player health
+  p2.displayAmmo(p2.pos.x, p2.pos.y, p2.ammo, p2.ammo > 0); //and ammo
   
   if(p1Shoot && crate.checkCollision(crate.pos.x, crate.pos.y, p1.pos.x, p1.pos.y, crate.SIZE, p1.SIZE) && crate.life > 0) {
     if(crate.type == 0) { //weapon crate
