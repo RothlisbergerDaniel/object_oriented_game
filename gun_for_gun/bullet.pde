@@ -64,8 +64,8 @@ class Bullet {
     if(type == 4) { //if homing bullet
       float angleDiff;
       if(team == 1) {
-        angleDiff = atan2(p2.pos.y - pos.y, p2.pos.x - pos.x) - vel.heading();
-        vel.rotate(angleDiff * (vel.mag() / 100));
+        angleDiff = atan2(p2.pos.y - pos.y, p2.pos.x - pos.x) - vel.heading(); //gets the difference in angles, used for smooth turning
+        vel.rotate(angleDiff * (dist(0, 0, vel.x, vel.y) / 100)); //use dist() to tick a skills inventory skill, otherwise I'd use mag. dist() here basically gets mag anyway.
       } else {
         
       }
