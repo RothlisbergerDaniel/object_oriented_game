@@ -103,7 +103,7 @@ void draw() {
   
     if(p1Shoot && crate.checkCollision(crate.pos.x, crate.pos.y, p1.pos.x, p1.pos.y, crate.SIZE, p1.SIZE) && crate.life > 0) {
       if(crate.type == 0) { //weapon crate
-        p1.changeWeapon(int(random(10, 11))); //change weapon from one to max + 1 - not including default weapon
+        p1.changeWeapon(int(random(1, 11))); //change weapon from one to max + 1 - not including default weapon
         crate.life = int(random(5, 11)) * -60; //remove crate, set crate spawn delay to a random value between 5 and 10 seconds
       } else if(crate.type == 1 && p1.weapon > 0 && p1.clipsLeft < 10) { //if ammo recharge crate and not default weapon and not at max clips
         p1.clipsLeft ++; //add a full clip
